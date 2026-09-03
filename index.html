@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Shoreline — a small harbor for personal projects</title>
+<meta name="description" content="Shoreline is a personal hub for small self-built web apps: a cloud notes tool and a games corner. Made and maintained by one person on the coast of the internet." />
+<meta name="theme-color" content="#04121f" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E%F0%9F%8C%8A%3C/text%3E%3C/svg%3E" />
+
+<!-- Open Graph / social + legitimacy signals for reputation scanners -->
+<meta property="og:title" content="Shoreline" />
+<meta property="og:description" content="A small harbor for personal web projects — notes and games." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://shoreline.one" />
+
+<style>
+  :root {
+    --deep:   #04121f;
+    --deep-2: #071d31;
+    --tide:   #0b3a5b;
+    --foam:   #7fe7d6;
+    --foam-2: #46c7c0;
+    --sun:    #ffcf6b;
+    --coral:  #ff7a6b;
+    --ink:    #dbeaf2;
+    --ink-dim:#7fa0b4;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+    --sans: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { height: 100%; }
+
+  body {
+    font-family: var(--sans);
+    color: var(--ink);
+    background:
+      radial-gradient(1200px 600px at 80% -10%, #0d3350 0%, transparent 60%),
+      radial-gradient(900px 500px at 10% 0%, #0a2740 0%, transparent 55%),
+      linear-gradient(180deg, var(--deep) 0%, var(--deep-2) 55%, var(--tide) 100%);
+    min-height: 100%;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* drifting particle canvas (sea-spray / plankton glow) */
+  #spray {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 2;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* top coordinate bar — nautical/terminal flavor */
+  .coords {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--ink-dim);
+    padding: 20px 0 0;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .coords .blink {
+    color: var(--foam);
+    animation: blink 1.6s steps(2, start) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0.25; } }
+
+  header.hero {
+    padding: 12vh 0 8vh;
+  }
+
+  .logo {
+    display: block;
+    height: clamp(40px, 6vw, 64px);
+    width: auto;
+    margin-bottom: 28px;
+    filter: drop-shadow(0 4px 20px rgba(127, 231, 214, 0.25));
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--foam);
+    border: 1px solid rgba(127, 231, 214, 0.3);
+    background: rgba(127, 231, 214, 0.06);
+    padding: 6px 12px;
+    border-radius: 999px;
+    margin-bottom: 28px;
+  }
+  .badge .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--foam);
+    box-shadow: 0 0 10px var(--foam);
+  }
+
+  h1 {
+    font-size: clamp(44px, 9vw, 104px);
+    line-height: 0.94;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+  }
+  h1 .tide-word {
+    background: linear-gradient(120deg, var(--foam) 0%, var(--sun) 60%, var(--coral) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .lede {
+    max-width: 560px;
+    font-size: clamp(16px, 2.2vw, 20px);
+    line-height: 1.6;
+    color: var(--ink-dim);
+  }
+  .lede strong { color: var(--ink); font-weight: 600; }
+
+  /* the "docks" — app cards laid out like moored boats */
+  .docks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    padding-bottom: 10vh;
+  }
+
+  .dock {
+    position: relative;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    border-radius: 20px;
+    padding: 28px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+    border: 1px solid rgba(255,255,255,0.09);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    overflow: hidden;
+    transition: transform .3s cubic-bezier(.2,.8,.2,1), border-color .3s, box-shadow .3s;
+    isolation: isolate;
+  }
+  .dock::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity .35s;
+    background: radial-gradient(400px 200px at var(--mx, 50%) var(--my, 0%), rgba(127,231,214,0.18), transparent 70%);
+  }
+  .dock:hover {
+    transform: translateY(-6px);
+    border-color: rgba(127,231,214,0.5);
+    box-shadow: 0 20px 50px -20px rgba(0,0,0,0.7);
+  }
+  .dock:hover::before { opacity: 1; }
+  .dock:focus-visible {
+    outline: 2px solid var(--foam);
+    outline-offset: 3px;
+  }
+
+  .dock .num {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--foam-2);
+    letter-spacing: 0.1em;
+  }
+  .dock .icon { font-size: 40px; margin: 10px 0 16px; display: block; }
+  .dock h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 8px; }
+  .dock p { color: var(--ink-dim); font-size: 15px; line-height: 1.55; }
+  .dock .go {
+    margin-top: 20px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--foam);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dock .go .arrow { transition: transform .3s; }
+  .dock:hover .go .arrow { transform: translateX(6px); }
+
+  .dock.soon { cursor: default; }
+  .dock.soon:hover { transform: none; border-color: rgba(255,255,255,0.09); box-shadow: none; }
+  .dock.soon:hover::before { opacity: 0; }
+  .dock.soon .go { color: var(--ink-dim); }
+
+  /* animated ocean at the base */
+  .ocean {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    height: 28vh;
+    min-height: 160px;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .ocean svg { width: 100%; height: 100%; display: block; }
+  .wave { animation: drift 12s linear infinite; }
+  .wave.w2 { animation-duration: 18s; animation-direction: reverse; opacity: 0.6; }
+  .wave.w3 { animation-duration: 26s; opacity: 0.4; }
+  @keyframes drift {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  footer {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 4vh 24px 5vh;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-dim);
+    letter-spacing: 0.05em;
+  }
+  footer a { color: var(--foam-2); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wave, .badge .dot, .coords .blink { animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+  <canvas id="spray" aria-hidden="true"></canvas>
+
+  <div class="wrap">
+    <div class="coords" aria-hidden="true">
+      <span>LAT 44.9°N &nbsp;·&nbsp; LON 79.2°W</span>
+      <span>STATUS: <span class="blink">MOORED ▮</span></span>
+    </div>
+
+    <header class="hero">
+      <img class="logo" src="logotext.png" alt="Shoreline" />
+      <span class="badge"><span class="dot"></span> a harbor on the .one coast</span>
+      <h1>Welcome to<br /><span class="tide-word">Shoreline</span></h1>
+      <p class="lede">
+        <!--intro text-->
+      </p>
+    </header>
+
+    <main class="docks" aria-label="Projects">
+      <a class="dock" href="https://notes.shoreline.one">
+        <span class="num">DOCK 01</span>
+        <span class="icon">🗒️</span>
+        <h2>CloudNotes</h2>
+        <p>A fast, private notebook that syncs to the cloud. Sign in, jot things down, come back to them anywhere.</p>
+        <span class="go"><span>set sail</span><span class="arrow">→</span></span>
+      </a>
+
+      <a class="dock" href="https://games.shoreline.one">
+        <span class="num">DOCK 02</span>
+        <span class="icon">🎮</span>
+        <h2>Games</h2>
+        <p>A little arcade corner — small browser games to waste a few good minutes on. More get added when the tide's right.</p>
+        <span class="go"><span>set sail</span><span class="arrow">→</span></span>
+      </a>
+
+      <div class="dock soon">
+        <span class="num">DOCK 03</span>
+        <span class="icon">🚧</span>
+        <h2>Under construction</h2>
+        <p>There's room at the pier for whatever gets built next. Check back — the harbor keeps growing.</p>
+        <span class="go"><span>coming soon</span></span>
+      </div>
+    </main>
+  </div>
+
+  <!-- animated ocean -->
+  <div class="ocean" aria-hidden="true">
+    <svg viewBox="0 0 1440 200" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="wg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#0b3a5b" />
+          <stop offset="100%" stop-color="#04121f" />
+        </linearGradient>
+      </defs>
+      <!-- each wave path is 2x width so it can scroll seamlessly -->
+      <g class="wave w3">
+        <path fill="url(#wg)" d="M0,90 C180,140 360,40 720,90 C1080,140 1260,40 1440,90 C1620,140 1800,40 2160,90 C2520,140 2700,40 2880,90 L2880,200 L0,200 Z"/>
+      </g>
+      <g class="wave w2">
+        <path fill="#0a2f4d" d="M0,110 C240,70 480,150 720,110 C960,70 1200,150 1440,110 C1680,70 1920,150 2160,110 C2400,70 2640,150 2880,110 L2880,200 L0,200 Z"/>
+      </g>
+      <g class="wave">
+        <path fill="#0b3a5b" d="M0,130 C180,160 360,100 720,130 C1080,160 1260,100 1440,130 C1620,160 1800,100 2160,130 C2520,160 2700,100 2880,130 L2880,200 L0,200 Z"/>
+      </g>
+    </svg>
+  </div>
+
+  <footer>
+    <p>Shoreline · Dive Deeper, Stay Grounded</p>
+    <p style="margin-top:6px;">Adrift somewhere near 44.9°N<!--<a href="mailto:hello@shoreline.one">hello@shoreline.one</a>--></p>
+  </footer>
+
+<script>
+  // --- drifting sea-spray particles on the canvas ---
+  (function () {
+    const canvas = document.getElementById('spray');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!canvas || reduce) return;
+    const ctx = canvas.getContext('2d');
+    let w, h, particles;
+
+    function seed() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+      const count = Math.min(90, Math.floor((w * h) / 22000));
+      particles = Array.from({ length: count }, () => ({
+        x: Math.random() * w,
+        y: Math.random() * h,
+        r: Math.random() * 1.8 + 0.4,
+        vx: (Math.random() - 0.5) * 0.15,
+        vy: -(Math.random() * 0.25 + 0.05),
+        a: Math.random() * 0.5 + 0.1
+      }));
+    }
+
+    function frame() {
+      ctx.clearRect(0, 0, w, h);
+      for (const p of particles) {
+        p.x += p.vx; p.y += p.vy;
+        if (p.y < -5) { p.y = h + 5; p.x = Math.random() * w; }
+        if (p.x < -5) p.x = w + 5;
+        if (p.x > w + 5) p.x = -5;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(127, 231, 214, ' + p.a + ')';
+        ctx.fill();
+      }
+      requestAnimationFrame(frame);
+    }
+
+    seed();
+    window.addEventListener('resize', seed);
+    frame();
+  })();
+
+  // --- pointer-follow glow on the dock cards ---
+  document.querySelectorAll('.dock').forEach(card => {
+    card.addEventListener('pointermove', e => {
+      const rect = card.getBoundingClientRect();
+      card.style.setProperty('--mx', (e.clientX - rect.left) + 'px');
+      card.style.setProperty('--my', (e.clientY - rect.top) + 'px');
+    });
+  });
+</script>
+</body>
+</html>
