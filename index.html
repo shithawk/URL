@@ -17,6 +17,34 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://shoreline.one/" />
 
+<!-- Structured data (JSON-LD) for search engines -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://shoreline.one/#website",
+      "url": "https://shoreline.one/",
+      "name": "Shoreline",
+      "description": "A small harbor for personal web projects — notes and games.",
+      "publisher": { "@id": "https://shoreline.one/#organization" },
+      "inLanguage": "en"
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://shoreline.one/#organization",
+      "name": "Shoreline",
+      "url": "https://shoreline.one/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://shoreline.one/logotext.png"
+      }
+    }
+  ]
+}
+</script>
+
 <style>
   :root {
     --deep:   #04121f;
