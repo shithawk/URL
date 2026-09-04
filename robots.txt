@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.shoreline.one/sitemap.xml
+Sitemap: https://shoreline.one/sitemap.xml
