@@ -165,6 +165,22 @@
     box-shadow: 0 0 10px var(--foam);
   }
 
+  .contact {
+    display: block;
+    font-family: var(--mono);
+    font-size: clamp(20px, 3.2vw, 32px);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--foam);
+    text-decoration: none;
+    margin-bottom: 28px;
+    transition: color .25s, text-shadow .25s;
+  }
+  .contact:hover {
+    color: var(--sun);
+    text-shadow: 0 0 18px rgba(127, 231, 214, 0.4);
+  }
+
   h1 {
     font-size: clamp(28px, 6vw, 64px);
     line-height: 0.94;
@@ -310,6 +326,7 @@
     <header class="hero">
       <img class="logo" src="logotext.png" alt="Shoreline" />
       <span class="badge"><span class="dot"></span>where the elements meet, dive deeper, stay grounded</span>
+      <a class="contact" href="mailto:jacobean@gmail.com">jacob@shoreline.one</a>
       <h1>Welcome to<br /><span class="tide-word">Shoreline</span></h1>
       <p class="lede">
         <!--intro text-->
@@ -369,6 +386,7 @@
 
   <footer>
     <p>Shoreline · Dive Deeper, Stay Grounded</p>
+    <p style="margin-top:6px;"><a href="mailto:jacobean@gmail.com">jacob@shoreline.one</a></p>
     <p style="margin-top:6px;">Adrift somewhere near 44.9°N<!--<a href="mailto:hello@shoreline.one">hello@shoreline.one</a>--></p>
   </footer>
 
