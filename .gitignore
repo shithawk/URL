@@ -4,3 +4,8 @@ node_modules/
 .env
 .env.local
 *.log
+
+# Large local video — hosted on YouTube instead
+video/
+*.mp4
+!bgwave.mp4

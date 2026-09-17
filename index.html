@@ -168,7 +168,7 @@
   .contact {
     display: block;
     font-family: var(--mono);
-    font-size: clamp(20px, 3.2vw, 32px);
+    font-size: clamp(20px, 3.2vw, 20px);
     font-weight: 600;
     letter-spacing: -0.01em;
     color: var(--foam);
@@ -202,6 +202,36 @@
     color: var(--ink-dim);
   }
   .lede strong { color: var(--ink); font-weight: 600; }
+
+  /* featured video — responsive 16:9 embed in a glassy frame */
+  .reel {
+    margin: 0 0 8vh;
+  }
+  .reel h2 {
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--foam-2);
+    margin-bottom: 16px;
+  }
+  .reel .frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.09);
+    box-shadow: 0 20px 50px -20px rgba(0,0,0,0.7);
+    background: #04121f;
+  }
+  .reel .frame iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
 
   /* the "docks" — app cards laid out like moored boats */
   .docks {
@@ -325,13 +355,26 @@
 
     <header class="hero">
       <img class="logo" src="logotext.png" alt="Shoreline" />
-      <span class="badge"><span class="dot"></span>where the elements meet, dive deeper, stay grounded</span>
+      <span class="badge"><span class="dot"></span>dive deeper, stay grounded</span>
       <a class="contact" href="mailto:jacob@shoreline.one">jacob@shoreline.one</a>
       <h1>Welcome to<br /><span class="tide-word">Shoreline</span></h1>
       <p class="lede">
         <!--intro text-->
       </p>
     </header>
+
+    <section class="reel" aria-label="Featured video">
+      <h2>▸ from the harbor</h2>
+      <div class="frame">
+        <iframe
+          src="https://www.youtube-nocookie.com/embed/KCd-yhtQ5HY"
+          title="Shoreline video"
+          loading="lazy"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen></iframe>
+      </div>
+    </section>
 
     <main class="docks" aria-label="Projects">
       <a class="dock" href="https://notes.shoreline.one">
@@ -385,7 +428,7 @@
   </div>
 
   <footer>
-    <p>Shoreline · Dive Deeper, Stay Grounded</p>
+    <p>Shoreline · Where The Elements Meet</p>
     <p style="margin-top:6px;"><a href="mailto:jacob@shoreline.one">jacob@shoreline.one</a></p>
     <p style="margin-top:6px;">Adrift somewhere near 44.9°N</p>
   </footer>
