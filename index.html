@@ -11,6 +11,9 @@
 <meta name="yandex-verification" content="636da626757dc146" />
 <link rel="canonical" href="https://shoreline.one/" />
 <link rel="icon" href="/favicon.ico" sizes="any" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
 
 <!-- Open Graph / social + legitimacy signals for reputation scanners -->
 <meta property="og:title" content="Shoreline" />
@@ -57,6 +60,7 @@
     --coral:  #ff7a6b;
     --ink:    #dbeaf2;
     --ink-dim:#7fa0b4;
+    --ink-lede:#9bb8c8;
     --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
     --sans: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   }
@@ -95,7 +99,7 @@
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    background: linear-gradient(180deg, rgba(4,18,31,0.55) 0%, rgba(4,18,31,0.35) 45%, rgba(11,58,91,0.6) 100%);
+    background: linear-gradient(180deg, rgba(4,18,31,0.68) 0%, rgba(4,18,31,0.48) 45%, rgba(11,58,91,0.72) 100%);
   }
 
   /* drifting particle canvas (sea-spray / plankton glow) */
@@ -133,7 +137,7 @@
   @keyframes blink { 50% { opacity: 0.25; } }
 
   header.hero {
-    padding: 5vh 0 8vh;
+    padding: 4vh 0 5vh;
   }
 
   .logo {
@@ -196,10 +200,10 @@
   }
 
   .lede {
-    max-width: 560px;
-    font-size: clamp(16px, 2.2vw, 20px);
-    line-height: 1.6;
-    color: var(--ink-dim);
+    max-width: 34em;
+    font-size: 18px;
+    line-height: 1.55;
+    color: var(--ink-lede);
   }
   .lede strong { color: var(--ink); font-weight: 600; }
 
