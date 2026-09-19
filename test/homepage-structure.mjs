@@ -27,5 +27,35 @@ assert.match(
   /\.lede\s*\{[^}]*max-width:\s*34em;[^}]*font-size:\s*18px;[^}]*line-height:\s*1\.55;[^}]*color:\s*var\(--ink-lede\);/s,
   "lede must use 18px / 1.55 / 34em / --ink-lede"
 );
+assert.match(
+  html,
+  /A small harbor for personal web projects — notes, games, and whatever gets built next\./,
+  "intro sentence must be present"
+);
+assert.equal(
+  (html.match(/jacob@shoreline\.one/g) || []).length,
+  1,
+  "email must appear once"
+);
+assert.match(
+  html,
+  /<div class="coords">[\s\S]*mailto:jacob@shoreline\.one[\s\S]*STATUS:/,
+  "email must live inside .coords, before STATUS"
+);
+assert.doesNotMatch(
+  html,
+  /<header class="hero">[\s\S]*mailto:jacob@shoreline\.one/,
+  "hero must not contain the mailto"
+);
+assert.doesNotMatch(
+  html,
+  /<footer>[\s\S]*mailto:jacob@shoreline\.one/,
+  "footer must not contain the mailto"
+);
+assert.doesNotMatch(
+  html,
+  /<div class="coords" aria-hidden="true">/,
+  "coords wrapper must not be aria-hidden (email lives there)"
+);
 
 console.log("homepage-structure: ok");

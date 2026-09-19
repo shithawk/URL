@@ -125,9 +125,9 @@
     letter-spacing: 0.08em;
     color: var(--ink-dim);
     padding: 20px 0 0;
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
     gap: 8px;
   }
   .coords .blink {
@@ -135,6 +135,37 @@
     animation: blink 1.6s steps(2, start) infinite;
   }
   @keyframes blink { 50% { opacity: 0.25; } }
+  .coords .geo { justify-self: start; }
+  .coords .status { justify-self: end; text-align: right; }
+
+  .contact {
+    justify-self: center;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    color: var(--foam);
+    text-decoration: none;
+    transition: color .25s;
+  }
+  .contact:hover,
+  .contact:focus-visible {
+    color: var(--sun);
+  }
+  .contact:focus-visible {
+    outline: 2px solid var(--foam);
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 640px) {
+    .coords {
+      grid-template-columns: 1fr 1fr;
+    }
+    .coords .contact {
+      grid-column: 1 / -1;
+      justify-self: start;
+    }
+  }
 
   header.hero {
     padding: 4vh 0 5vh;
@@ -167,22 +198,6 @@
     width: 7px; height: 7px; border-radius: 50%;
     background: var(--foam);
     box-shadow: 0 0 10px var(--foam);
-  }
-
-  .contact {
-    display: block;
-    font-family: var(--mono);
-    font-size: clamp(20px, 3.2vw, 20px);
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    color: var(--foam);
-    text-decoration: none;
-    margin-bottom: 28px;
-    transition: color .25s, text-shadow .25s;
-  }
-  .contact:hover {
-    color: var(--sun);
-    text-shadow: 0 0 18px rgba(127, 231, 214, 0.4);
   }
 
   h1 {
@@ -352,18 +367,18 @@
   <canvas id="spray" aria-hidden="true"></canvas>
 
   <div class="wrap">
-    <div class="coords" aria-hidden="true">
-      <span>LAT 44.9°N &nbsp;·&nbsp; LON 79.2°W</span>
-      <span>STATUS: <span class="blink">MOORED ▮</span></span>
+    <div class="coords">
+      <span class="geo" aria-hidden="true">LAT 44.9°N &nbsp;·&nbsp; LON 79.2°W</span>
+      <a class="contact" href="mailto:jacob@shoreline.one">jacob<span aria-hidden="true">@</span>shoreline.one</a>
+      <span class="status" aria-hidden="true">STATUS: <span class="blink">MOORED ▮</span></span>
     </div>
 
     <header class="hero">
       <img class="logo" src="logotext.png" alt="Shoreline" />
       <span class="badge"><span class="dot"></span>dive deeper, stay grounded</span>
-      <a class="contact" href="mailto:jacob@shoreline.one">jacob@shoreline.one</a>
       <h1>Welcome to<br /><span class="tide-word">Shoreline</span></h1>
       <p class="lede">
-        <!--intro text-->
+        A small harbor for personal web projects — notes, games, and whatever gets built next.
       </p>
     </header>
 
@@ -435,7 +450,6 @@
 
   <footer>
     <p>Shoreline · Where The Elements Meet</p>
-    <p style="margin-top:6px;"><a href="mailto:jacob@shoreline.one">jacob@shoreline.one</a></p>
     <p style="margin-top:6px;">Adrift somewhere near 44.9°N</p>
   </footer>
 
