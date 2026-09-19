@@ -33,9 +33,9 @@ assert.match(
   "intro sentence must be present"
 );
 assert.equal(
-  (html.match(/jacob@shoreline\.one/g) || []).length,
+  (html.match(/mailto:jacob@shoreline\.one/g) || []).length,
   1,
-  "email must appear once"
+  "mailto contact must appear once"
 );
 assert.match(
   html,
