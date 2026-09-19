@@ -159,12 +159,17 @@
 
   @media (max-width: 640px) {
     .coords {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas:
+        "geo status"
+        "contact contact";
     }
+    .coords .geo { grid-area: geo; }
     .coords .contact {
-      grid-column: 1 / -1;
+      grid-area: contact;
       justify-self: start;
     }
+    .coords .status { grid-area: status; align-self: start; }
   }
 
   header.hero {
