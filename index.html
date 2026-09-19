@@ -258,11 +258,13 @@
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 20px;
     padding-bottom: 10vh;
+    align-items: stretch;
   }
 
   .dock {
     position: relative;
-    display: block;
+    display: flex;
+    flex-direction: column;
     text-decoration: none;
     color: inherit;
     border-radius: 20px;
@@ -295,17 +297,41 @@
     outline-offset: 3px;
   }
 
+  .dock-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
   .dock .num {
     font-family: var(--mono);
     font-size: 12px;
     color: var(--foam-2);
     letter-spacing: 0.1em;
   }
-  .dock .icon { font-size: 40px; margin: 10px 0 16px; display: block; }
+  .dock .glyph {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 1px solid rgba(127, 231, 214, 0.35);
+    background: rgba(127, 231, 214, 0.08);
+    color: var(--foam);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .dock .glyph svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+  }
   .dock h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 8px; }
   .dock p { color: var(--ink-dim); font-size: 15px; line-height: 1.55; }
   .dock .go {
-    margin-top: 20px;
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.08);
     font-family: var(--mono);
     font-size: 13px;
     color: var(--foam);
@@ -399,16 +425,32 @@
 
     <main class="docks" aria-label="Projects">
       <a class="dock" href="https://notes.shoreline.one">
-        <span class="num">DOCK 01</span>
-        <span class="icon">🗒️</span>
+        <span class="dock-head">
+          <span class="num">DOCK 01</span>
+          <span class="glyph" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 4h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>
+              <path d="M9 4v16"/>
+              <path d="M12 8h5M12 12h5M12 16h3"/>
+            </svg>
+          </span>
+        </span>
         <h2>CloudNotes</h2>
         <p>A fast, private notebook that syncs to the cloud. Sign in, jot things down, come back to them anywhere.</p>
         <span class="go"><span>set sail</span><span class="arrow">→</span></span>
       </a>
 
       <a class="dock" href="https://games.shoreline.one">
-        <span class="num">DOCK 02</span>
-        <span class="icon">🎮</span>
+        <span class="dock-head">
+          <span class="num">DOCK 02</span>
+          <span class="glyph" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 12h4M8 10v4"/>
+              <path d="M15.2 11.2h.1M17.5 13.6h.1"/>
+              <path d="M7.2 8.2h9.6a4.2 4.2 0 0 1 4.1 5.2l-.6 1.9A2.4 2.4 0 0 1 18 17.2H6a2.4 2.4 0 0 1-2.3-1.9l-.6-1.9a4.2 4.2 0 0 1 4.1-5.2z"/>
+            </svg>
+          </span>
+        </span>
         <h2>Games</h2>
         <p>A little arcade corner — small browser games to waste a few good minutes on. More get added when the tide's right.</p>
         <span class="go"><span>set sail</span><span class="arrow">→</span></span>

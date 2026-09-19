@@ -57,5 +57,19 @@ assert.doesNotMatch(
   /<div class="coords" aria-hidden="true">/,
   "coords wrapper must not be aria-hidden (email lives there)"
 );
+assert.doesNotMatch(html, /🗒️|🎮/, "dock cards must not use emoji icons");
+assert.match(html, /<span class="dock-head">/, "each dock needs a head row");
+assert.match(html, /class="glyph" aria-hidden="true"/, "glyphs must be decorative");
+assert.equal((html.match(/<svg[\s>]/g) || []).length, 3, "one ocean svg plus two dock icons");
+assert.match(
+  html,
+  /href="https:\/\/notes\.shoreline\.one"[\s\S]*CloudNotes[\s\S]*A fast, private notebook/,
+  "CloudNotes copy must stay"
+);
+assert.match(
+  html,
+  /href="https:\/\/games\.shoreline\.one"[\s\S]*Games[\s\S]*A little arcade corner/,
+  "Games copy must stay"
+);
 
 console.log("homepage-structure: ok");
