@@ -433,7 +433,7 @@ document.querySelectorAll("[data-look]").forEach((button) => {
 document.getElementById("q").addEventListener("input", applyFilters);
 
 bindCanvas();
-fetch("listings.json")
+fetch("/market/listings.json")
   .then((response) => response.json())
   .then((rows) => {
     listings = rows;
