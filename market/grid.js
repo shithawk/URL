@@ -3,7 +3,7 @@ const EXCHANGE = ["TSX", "TSXV", "CSE", "Cboe Canada"];
 const COLORS = {
   value: "#1F8A65",
   modest: "#2E79B5",
-  hype: "#8aa4b5",
+  hype: "#ff4d4d",
   neutral: "#ffffff",
   book: "#ffcf6b",
   ring: "#7fe7d6",
@@ -101,7 +101,7 @@ function renderPanel() {
   if (!row) {
     panel.innerHTML = "<h2>How to read a box</h2>" +
       "<p>Point at a box to name it. Click the box and the panel stays on that listing.</p>" +
-      "<p>Green is a price at or under 1.5 times book. Blue is a modest premium. Grey is a price above 4 times book, or a negative book. Funds, and stocks with no book on file, are white.</p>" +
+      "<p>Green is a price at or under 1.5 times book. Blue is a modest premium. Red is a price above 4 times book, or a negative book. Funds, and stocks with no book on file, are white.</p>" +
       "<p>The gold line inside a box is book value per share. Taller boxes have spanned a wider multiple from low to high.</p>";
     return;
   }
