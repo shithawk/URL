@@ -1,0 +1,34 @@
+name: Refresh market grid
+
+on:
+  schedule:
+    # 22:15 UTC is after the 16:00 Toronto close in both EDT and EST.
+    - cron: "15 22 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: market-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Refresh listings from Yahoo
+        run: python3 market/refresh.py
+      - name: Publish the new prices
+        run: |
+          git add market/listings.json market/asof.json
+          if git diff --cached --quiet; then
+            echo "No price changes"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Refresh Canadian market prices after the close."
+          git push

@@ -15,6 +15,7 @@ const COLORS = {
 
 const cam = { yaw: 0.62, pitch: 0.74, zoom: 1 };
 let listings = [];
+let asof = "";
 let shown = [];
 let hoverId = null;
 let pinnedId = null;
@@ -83,7 +84,8 @@ function applyFilters() {
     const n = shown.filter((row) => row.x === index).length;
     return n ? n.toLocaleString("en-CA") + " " + name : "";
   }).filter(Boolean);
-  counts.textContent = parts.join(" · ");
+  const when = asof ? " · prices " + asof : "";
+  counts.textContent = parts.join(" · ") + when;
   draw();
   renderPanel();
 }
@@ -433,10 +435,13 @@ document.querySelectorAll("[data-look]").forEach((button) => {
 document.getElementById("q").addEventListener("input", applyFilters);
 
 bindCanvas();
-fetch("/market/listings.json")
-  .then((response) => response.json())
-  .then((rows) => {
+Promise.all([
+  fetch("/market/listings.json").then((response) => response.json()),
+  fetch("/market/asof.json").then((response) => (response.ok ? response.json() : null)).catch(() => null),
+])
+  .then(([rows, meta]) => {
     listings = rows;
+    asof = meta && meta.asof ? meta.asof : "";
     applyFilters();
   })
   .catch(() => {
