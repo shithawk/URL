@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Market — Shoreline</title>
+<meta name="description" content="Canadian stocks and ETFs on a grid you can spin. Price across, years of history deep, box height the recorded high and low." />
+<meta name="theme-color" content="#04121f" />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://shoreline.one/market" />
+<link rel="icon" href="/favicon.ico" sizes="any" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --deep: #04121f;
+    --foam: #7fe7d6;
+    --sun: #ffcf6b;
+    --ink: #dbeaf2;
+    --ink-dim: #7fa0b4;
+    --ink-lede: #9bb8c8;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+    --sans: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--sans);
+    color: var(--ink);
+    background: var(--deep);
+    min-height: 100%;
+  }
+  a { color: var(--foam); text-decoration: none; }
+  a:hover { color: var(--sun); }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 20px 24px 48px; }
+  .bar {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: baseline;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--ink-dim);
+    margin-bottom: 22px;
+  }
+  h1 {
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+    margin-bottom: 10px;
+  }
+  .lede { max-width: 42em; color: var(--ink-lede); line-height: 1.5; margin-bottom: 18px; }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 14px; }
+  select, input, button {
+    font: 14px var(--sans);
+    color: var(--ink);
+    background: #071d31;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    padding: 7px 10px;
+  }
+  button { cursor: pointer; color: var(--foam); }
+  button:hover { border-color: rgba(127,231,214,0.5); }
+  input { min-width: 180px; }
+  .stage { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+  .stage-main { flex: 1 1 640px; min-width: 0; }
+  #grid { width: 100%; display: block; cursor: grab; touch-action: none; background: var(--deep); }
+  #counts, .source { margin-top: 8px; font-size: 12px; color: var(--ink-dim); line-height: 1.5; }
+  #panel {
+    flex: 0 1 280px;
+    min-width: 240px;
+  }
+  #panel h2 { font-size: 18px; margin-bottom: 8px; }
+  #panel p { color: var(--ink-lede); font-size: 14px; line-height: 1.45; margin-bottom: 8px; }
+  #panel button { margin-bottom: 10px; }
+  #stats { font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; color: var(--foam); margin-bottom: 10px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-lede); }
+  .swatch { width: 12px; height: 12px; display: inline-block; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="bar">
+      <a href="/">← Shoreline</a>
+      <span>CAD quotes · 20 Oct 2026</span>
+    </div>
+    <h1>Canadian listings</h1>
+    <p class="lede">Drag to spin and scroll to zoom. Click a box to keep that listing in the panel. Across the floor, last price runs left to right and years of price history run front to back. Each box stands from that listing's recorded low to its recorded high. The plate is the last price, and it fades as that price sits closer to the low.</p>
+    <p id="stats"></p>
+    <div class="controls">
+      <select id="market" aria-label="Market">
+        <option value="all">All markets</option>
+        <option value="0">TSX</option>
+        <option value="1">TSXV</option>
+        <option value="2">CSE</option>
+        <option value="3">Cboe Canada</option>
+      </select>
+      <select id="kind" aria-label="Kind">
+        <option value="all">Stocks and funds</option>
+        <option value="stock">Stocks</option>
+        <option value="etf">ETFs and funds</option>
+      </select>
+      <select id="ccy" aria-label="Currency">
+        <option value="cad">CAD quotes</option>
+        <option value="usd">USD quotes</option>
+        <option value="all">CAD and USD</option>
+      </select>
+      <input id="q" type="search" placeholder="Symbol or name" aria-label="Symbol or name" />
+      <button type="button" data-look="0.4,0.18">Top</button>
+      <button type="button" data-look="0.08,1.2">Side</button>
+      <button type="button" data-look="0.62,0.74">Angle</button>
+    </div>
+    <div class="stage">
+      <div class="stage-main">
+        <canvas id="grid" aria-label="Spinable grid of Canadian stocks and ETFs. Horizontal axis is last price on a log scale. Depth is years of Yahoo price history. Box height is the recorded high to low range."></canvas>
+        <p id="counts"></p>
+      </div>
+      <aside id="panel"></aside>
+    </div>
+    <div class="legend" aria-label="Colors">
+      <span><i class="swatch" style="background:#1F8A65"></i> Near book</span>
+      <span><i class="swatch" style="background:#2E79B5"></i> Modest premium</span>
+      <span><i class="swatch" style="background:#8aa4b5"></i> Far above book</span>
+      <span><i class="swatch" style="background:#ffffff"></i> Fund or no book</span>
+      <span><i class="swatch" style="background:#ffcf6b"></i> Book value</span>
+    </div>
+    <p class="source">Source: TMX TSX and TSXV directories, Yahoo Finance monthly bars through 20 Oct 2026, and Moomoo price-to-book where the symbol matched. CSE and Cboe Canada are only the Moomoo Canada names missing from those directories that Yahoo resolved as .CN or .NE. Years start at the first Yahoo bar. Box height is log10 of high divided by low. The price axis is a log scale.</p>
+  </div>
+  <script src="grid.js"></script>
+  <script>
+    window.va = window.va || function () { (window.vai = window.vai || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

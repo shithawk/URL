@@ -60,7 +60,7 @@ assert.doesNotMatch(
 assert.doesNotMatch(html, /🗒️|🎮/, "dock cards must not use emoji icons");
 assert.match(html, /<span class="dock-head">/, "each dock needs a head row");
 assert.match(html, /class="glyph" aria-hidden="true"/, "glyphs must be decorative");
-assert.equal((html.match(/<svg[\s>]/g) || []).length, 3, "one ocean svg plus two dock icons");
+assert.equal((html.match(/<svg[\s>]/g) || []).length, 4, "one ocean svg plus three dock icons");
 assert.match(
   html,
   /href="https:\/\/notes\.shoreline\.one"[\s\S]*CloudNotes[\s\S]*A fast, private notebook/,
@@ -70,6 +70,11 @@ assert.match(
   html,
   /href="https:\/\/games\.shoreline\.one"[\s\S]*Games[\s\S]*A little arcade corner/,
   "Games copy must stay"
+);
+assert.match(
+  html,
+  /href="\/market"[\s\S]*Market[\s\S]*Canadian stocks and ETFs on a grid you can spin/,
+  "Market dock must link to /market"
 );
 
 console.log("homepage-structure: ok");
