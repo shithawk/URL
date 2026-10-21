@@ -367,18 +367,55 @@ function pickId(event) {
 
 function bindCanvas() {
   let dragging = false;
+  let pinched = false;
+  let usingGesture = false;
+  let gestureZoom = 1;
+  let pinchDist = 0;
   let downX = 0;
   let downY = 0;
   let lastX = 0;
   let lastY = 0;
+  const pointers = new Map();
+
+  function span() {
+    const pts = [...pointers.values()];
+    if (pts.length < 2) return 0;
+    return Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+  }
+
+  function setZoom(next) {
+    cam.zoom = Math.min(2.8, Math.max(0.55, next));
+  }
+
   canvas.addEventListener("pointerdown", (event) => {
+    pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    canvas.setPointerCapture(event.pointerId);
+    if (pointers.size >= 2) {
+      dragging = false;
+      pinched = true;
+      pinchDist = span();
+      canvas.dataset.dragging = "0";
+      return;
+    }
     dragging = true;
+    pinched = false;
     canvas.dataset.dragging = "1";
     downX = lastX = event.clientX;
     downY = lastY = event.clientY;
-    canvas.setPointerCapture(event.pointerId);
   });
   canvas.addEventListener("pointermove", (event) => {
+    if (pointers.has(event.pointerId)) {
+      pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    }
+    if (usingGesture || pointers.size >= 2) {
+      const dist = span();
+      if (!usingGesture && pinchDist > 0 && dist > 0) {
+        setZoom(cam.zoom * (dist / pinchDist));
+        pinchDist = dist;
+        draw();
+      }
+      return;
+    }
     if (!dragging) {
       if (pinnedId) return;
       const next = pickId(event);
@@ -396,22 +433,59 @@ function bindCanvas() {
     draw();
   });
   canvas.addEventListener("pointerup", (event) => {
-    if (!dragging) return;
+    pointers.delete(event.pointerId);
+    if (pointers.size > 0) {
+      dragging = false;
+      pinchDist = span();
+      const left = [...pointers.values()][0];
+      lastX = downX = left.x;
+      lastY = downY = left.y;
+      return;
+    }
     const moved = Math.hypot(event.clientX - downX, event.clientY - downY);
+    const wasDrag = dragging;
     dragging = false;
     canvas.dataset.dragging = "0";
-    if (moved < 6) {
+    if (wasDrag && !pinched && moved < 6) {
       const next = pickId(event);
       pinnedId = next;
       if (next) hoverId = next;
       renderPanel();
     }
+    pinched = false;
+    pinchDist = 0;
     draw();
   });
+  canvas.addEventListener("pointercancel", (event) => {
+    pointers.delete(event.pointerId);
+    if (pointers.size === 0) {
+      dragging = false;
+      pinched = false;
+      pinchDist = 0;
+      canvas.dataset.dragging = "0";
+    }
+  });
   canvas.addEventListener("pointerleave", () => {
+    if (pointers.size > 0) return;
     dragging = false;
     canvas.dataset.dragging = "0";
   });
+  canvas.addEventListener("gesturestart", (event) => {
+    event.preventDefault();
+    usingGesture = true;
+    pinched = true;
+    dragging = false;
+    gestureZoom = cam.zoom;
+  }, { passive: false });
+  canvas.addEventListener("gesturechange", (event) => {
+    event.preventDefault();
+    setZoom(gestureZoom * event.scale);
+    draw();
+  }, { passive: false });
+  canvas.addEventListener("gestureend", (event) => {
+    event.preventDefault();
+    usingGesture = false;
+  }, { passive: false });
   canvas.addEventListener("wheel", (event) => {
     event.preventDefault();
     cam.zoom = Math.min(2.8, Math.max(0.55, cam.zoom * (event.deltaY > 0 ? 0.92 : 1.08)));
