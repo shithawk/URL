@@ -32,7 +32,7 @@
   }
   a { color: var(--foam); text-decoration: none; }
   a:hover { color: var(--sun); }
-  .wrap { max-width: 1180px; margin: 0 auto; padding: 20px 24px 48px; }
+  .wrap { max-width: none; margin: 0 auto; padding: 16px 20px 40px; }
   .bar {
     display: flex;
     justify-content: space-between;
@@ -50,8 +50,7 @@
     letter-spacing: -0.03em;
     margin-bottom: 10px;
   }
-  .lede { max-width: 42em; color: var(--ink-lede); line-height: 1.5; margin-bottom: 18px; }
-  .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 14px; }
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
   select, input, button {
     font: 14px var(--sans);
     color: var(--ink);
@@ -63,17 +62,30 @@
   button { cursor: pointer; color: var(--foam); }
   button:hover { border-color: rgba(127,231,214,0.5); }
   input { min-width: 180px; }
-  .stage { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
-  .stage-main { flex: 1 1 640px; min-width: 0; }
+  .stage { display: flex; gap: 18px; align-items: stretch; flex-wrap: wrap; }
+  .stage-main { flex: 1 1 860px; min-width: 0; }
   #grid { width: 100%; display: block; cursor: grab; touch-action: none; background: var(--deep); }
   #counts, .source { margin-top: 8px; font-size: 12px; color: var(--ink-dim); line-height: 1.5; }
   #panel {
-    flex: 0 1 280px;
-    min-width: 240px;
+    flex: 0 0 320px;
+    min-width: 260px;
   }
-  #panel h2 { font-size: 18px; margin-bottom: 8px; }
-  #panel p { color: var(--ink-lede); font-size: 14px; line-height: 1.45; margin-bottom: 8px; }
-  #panel button { margin-bottom: 10px; }
+  #panel h2 { font-size: 20px; line-height: 1.15; margin-bottom: 4px; }
+  #panel .ticker { font-family: var(--mono); color: var(--foam); font-size: 13px; letter-spacing: 0.04em; margin-bottom: 12px; }
+  #panel button { margin-bottom: 12px; }
+  #panel dl { display: grid; gap: 8px; }
+  #panel .field dt {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  #panel .field dd {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--ink);
+    margin-top: 2px;
+  }
   #stats { font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em; color: var(--foam); margin-bottom: 10px; }
   .legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
   .legend span { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-lede); }
@@ -87,7 +99,6 @@
       <span>CAD quotes · 20 Oct 2026</span>
     </div>
     <h1>Canadian listings</h1>
-    <p class="lede">Drag to spin. Scroll or pinch to zoom. Click a box to keep that listing in the panel. Across the floor, last price runs left to right and years of price history run front to back. Each box stands from that listing's recorded low to its recorded high. The plate is the last price, and it fades as that price sits closer to the low.</p>
     <p id="stats"></p>
     <div class="controls">
       <select id="market" aria-label="Market">

@@ -98,35 +98,49 @@ function selectedRow() {
   return shown.find((row) => listingId(row) === hoverId) || null;
 }
 
+function field(label, value) {
+  return '<div class="field"><dt>' + label + "</dt><dd>" + value + "</dd></div>";
+}
+
+function bookValue(row) {
+  if (row.k === 1) return "Fund";
+  if (row.pb === null) return "—";
+  if (!(row.pb > 0)) return "Negative book";
+  const ccy = row.usd === 1 ? "USD" : "CAD";
+  return money(row.p / row.pb) + " " + ccy;
+}
+
+function capLabel(row) {
+  if (!(row.mc > 0)) return "—";
+  const ccy = row.usd === 1 ? "USD" : "CAD";
+  const cap = row.mc >= 1000 ? (row.mc / 1000).toFixed(1) + " billion" : row.mc.toFixed(0) + " million";
+  return cap + " " + ccy;
+}
+
 function renderPanel() {
   const row = selectedRow();
-  if (!row) {
-    panel.innerHTML = "<h2>How to read a box</h2>" +
-      "<p>Point at a box to name it. Click the box and the panel stays on that listing.</p>" +
-      "<p>Green is a price at or under 1.5 times book. Blue is a modest premium. Red is a price above 4 times book, or a negative book. Funds, and stocks with no book on file, are white.</p>" +
-      "<p>The gold line inside a box is book value per share. Taller boxes have spanned a wider multiple from low to high.</p>";
-    return;
-  }
-  const ccy = row.usd === 1 ? "USD" : "CAD";
-  const kind = row.k === 1 ? "ETF or fund" : "Stock";
-  let html = "<h2>" + escapeHtml(row.n) + "</h2>";
-  if (pinnedId && listingId(row) === pinnedId) {
+  const ccy = row ? (row.usd === 1 ? "USD" : "CAD") : "—";
+  const kind = row ? (row.k === 1 ? "ETF or fund" : "Stock") : "—";
+  let html = "<h2>" + (row ? escapeHtml(row.n) : "—") + "</h2>";
+  html += '<p class="ticker">' + (row ? escapeHtml(row.s) : "—") + "</p>";
+  if (row && pinnedId && listingId(row) === pinnedId) {
     html += '<button type="button" id="release">Release</button>';
   }
-  html += "<p>" + escapeHtml(row.s) + " · " + EXCHANGE[row.x] + " · " + kind + " · " + ccy + "</p>";
-  html += "<p>Last price " + money(row.p) + " " + ccy + "</p>";
-  html += "<p>Recorded low " + money(row.lo) + ", high " + money(row.hi) + ". The last price is " +
-    Math.round(rangeFraction(row, row.p) * 100) + "% of the way from the low to the high.</p>";
-  html += "<p>" + row.y.toFixed(1) + " years of Yahoo price history.</p>";
-  html += "<p>" + bucketLabel(row) + "</p>";
-  if (row.pb !== null && row.pb > 0) {
-    html += "<p>Price to book " + row.pb.toFixed(2) + ". Book value is about " +
-      money(row.p / row.pb) + " " + ccy + " a share.</p>";
-  }
-  if (row.mc > 0) {
-    const cap = row.mc >= 1000 ? (row.mc / 1000).toFixed(1) + " billion" : row.mc.toFixed(0) + " million";
-    html += "<p>Market cap " + cap + " " + ccy + ".</p>";
-  }
+  html += "<dl>";
+  html += field("Ticker", row ? escapeHtml(row.s) : "—");
+  html += field("Market", row ? EXCHANGE[row.x] : "—");
+  html += field("Kind", kind);
+  html += field("Currency", ccy);
+  html += field("Last price", row ? money(row.p) + " " + ccy : "—");
+  html += field("Book value", row ? bookValue(row) : "—");
+  html += field("Price to book", row && row.pb !== null ? row.pb.toFixed(2) : "—");
+  html += field("Low", row ? money(row.lo) + " " + ccy : "—");
+  html += field("High", row ? money(row.hi) + " " + ccy : "—");
+  html += field("Price in range", row ? Math.round(rangeFraction(row, row.p) * 100) + "%" : "—");
+  html += field("Years of history", row ? row.y.toFixed(1) : "—");
+  html += field("Market cap", row ? capLabel(row) : "—");
+  html += field("Versus book", row ? bucketLabel(row) : "—");
+  html += "</dl>";
   panel.innerHTML = html;
   const release = document.getElementById("release");
   if (release) {
@@ -149,7 +163,7 @@ function escapeHtml(value) {
 function draw() {
   const parent = canvas.parentElement;
   const width = parent.clientWidth || 800;
-  const height = Math.max(520, Math.min(760, window.innerHeight - 220));
+  const height = Math.max(760, Math.min(1200, Math.round(window.innerHeight - 120)));
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   canvas.width = Math.floor(width * dpr);
   canvas.height = Math.floor(height * dpr);
