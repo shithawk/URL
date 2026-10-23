@@ -217,7 +217,7 @@ function draw() {
     const y2 = y1 * cp - z * sp;
     const z2 = y1 * sp + z * cp;
     const f = (cam.zoom * Math.min(width, height)) / (6.6 - z2);
-    return { x: width / 2 + x1 * f, y: height * 0.24 + y2 * f, z: z2 };
+    return { x: width / 2 + x1 * f, y: height * 0.42 + y2 * f, z: z2 };
   }
   const wx = (price) => ((Math.log10(price) - minLog) / (maxLog - minLog || 1)) * 2 - 1;
   const wy = (year) => (year / maxYear) * 2 - 1;
