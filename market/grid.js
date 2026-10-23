@@ -13,7 +13,14 @@ const COLORS = {
   bg: "#04121f",
 };
 
+const ZOOM_MIN = 0.55;
+const ZOOM_MAX = 8;
+const ZOOM_STEP = 1.35;
 const cam = { yaw: 0.62, pitch: 0.74, zoom: 1 };
+
+function setZoom(next) {
+  cam.zoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, next));
+}
 let listings = [];
 let asof = "";
 let shown = [];
@@ -420,10 +427,6 @@ function bindCanvas() {
     return Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
   }
 
-  function setZoom(next) {
-    cam.zoom = Math.min(2.8, Math.max(0.55, next));
-  }
-
   canvas.addEventListener("pointerdown", (event) => {
     pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
     canvas.setPointerCapture(event.pointerId);
@@ -525,7 +528,7 @@ function bindCanvas() {
   }, { passive: false });
   canvas.addEventListener("wheel", (event) => {
     event.preventDefault();
-    cam.zoom = Math.min(2.8, Math.max(0.55, cam.zoom * (event.deltaY > 0 ? 0.92 : 1.08)));
+    setZoom(cam.zoom * (event.deltaY > 0 ? 0.92 : 1.08));
     draw();
   }, { passive: false });
   window.addEventListener("resize", draw);
@@ -539,6 +542,14 @@ document.querySelectorAll("[data-look]").forEach((button) => {
     cam.zoom = 1;
     draw();
   });
+});
+document.getElementById("zoom-out").addEventListener("click", () => {
+  setZoom(cam.zoom / ZOOM_STEP);
+  draw();
+});
+document.getElementById("zoom-in").addEventListener("click", () => {
+  setZoom(cam.zoom * ZOOM_STEP);
+  draw();
 });
 ["market", "kind", "ccy"].forEach((id) => {
   document.getElementById(id).addEventListener("change", applyFilters);
