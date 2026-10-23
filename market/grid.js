@@ -69,17 +69,26 @@ function bucketLabel(row) {
   return "Price is far above book.";
 }
 
-function applyFilters() {
+const PRICE_TICKS = [0.1, 1, 10, 100, 1000, 3000];
+const YEAR_TICKS = [0, 10, 20, 30, 40];
+
+function rowsForAxes() {
   const market = document.getElementById("market").value;
   const kind = document.getElementById("kind").value;
   const ccy = document.getElementById("ccy").value;
-  const needle = document.getElementById("q").value.trim().toLowerCase();
-  shown = listings.filter((row) => {
+  return listings.filter((row) => {
     if (market !== "all" && String(row.x) !== market) return false;
     if (kind === "stock" && row.k !== 0) return false;
     if (kind === "etf" && row.k !== 1) return false;
     if (ccy === "cad" && row.usd === 1) return false;
     if (ccy === "usd" && row.usd !== 1) return false;
+    return true;
+  });
+}
+
+function applyFilters() {
+  const needle = document.getElementById("q").value.trim().toLowerCase();
+  shown = rowsForAxes().filter((row) => {
     if (!needle) return true;
     return row.s.toLowerCase().includes(needle) || row.n.toLowerCase().includes(needle);
   });
@@ -195,7 +204,8 @@ function draw() {
   let maxYear = 10;
   let maxSpan = 1;
   let priced = 0;
-  for (const row of shown) {
+  const axisRows = rowsForAxes();
+  for (const row of (axisRows.length ? axisRows : shown)) {
     if (row.p > 0) {
       if (row.p < minP) minP = row.p;
       if (row.p > maxP) maxP = row.p;
@@ -209,6 +219,9 @@ function draw() {
     minP = 0.1;
     maxP = 100;
   }
+  minP = Math.min(minP, PRICE_TICKS[0]);
+  maxP = Math.max(maxP, PRICE_TICKS[PRICE_TICKS.length - 1]);
+  maxYear = Math.max(maxYear, YEAR_TICKS[YEAR_TICKS.length - 1]);
   if (maxP <= minP) maxP = minP * 10;
   const minLog = Math.log10(minP);
   const maxLog = Math.log10(maxP);
@@ -257,9 +270,9 @@ function draw() {
   const currency = ccy === "usd" ? "USD" : "CAD";
   const priceLabel = (price) => (price >= 1 ? "$" + price : "$" + price.toFixed(2));
   [-1.18, 1.18].forEach((edge) => {
-    [0.1, 1, 10, 100, 1000, 3000].forEach((price) => {
+    PRICE_TICKS.forEach((price) => {
       const log = Math.log10(price);
-      if (log < minLog || log > maxLog) return;
+      if (log < minLog - 1e-9 || log > maxLog + 1e-9) return;
       const at = project(wx(price), edge, 0);
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
@@ -273,7 +286,7 @@ function draw() {
     }
   });
   [-1.2, 1.2].forEach((edge) => {
-    [0, 10, 20, 30, 40].forEach((year) => {
+    YEAR_TICKS.forEach((year) => {
       if (year > maxYear) return;
       const at = project(edge, wy(year), 0);
       ctx.textAlign = edge < 0 ? "right" : "left";
