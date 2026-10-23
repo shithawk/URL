@@ -171,7 +171,7 @@ function escapeHtml(value) {
 function draw() {
   const parent = canvas.parentElement;
   const width = parent.clientWidth || 800;
-  const height = Math.max(760, Math.min(1200, Math.round(window.innerHeight - 120)));
+  const height = Math.max(880, Math.min(1400, Math.round(window.innerHeight - 64)));
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   canvas.width = Math.floor(width * dpr);
   canvas.height = Math.floor(height * dpr);
@@ -216,8 +216,8 @@ function draw() {
     const y1 = x * sy + y * cy;
     const y2 = y1 * cp - z * sp;
     const z2 = y1 * sp + z * cp;
-    const f = (cam.zoom * Math.min(width, height)) / (5.1 - z2);
-    return { x: width / 2 + x1 * f, y: height * 0.58 + y2 * f, z: z2 };
+    const f = (cam.zoom * Math.min(width, height)) / (6.6 - z2);
+    return { x: width / 2 + x1 * f, y: height * 0.24 + y2 * f, z: z2 };
   }
   const wx = (price) => ((Math.log10(price) - minLog) / (maxLog - minLog || 1)) * 2 - 1;
   const wy = (year) => (year / maxYear) * 2 - 1;
@@ -248,24 +248,39 @@ function draw() {
 
   ctx.fillStyle = COLORS.label;
   const currency = ccy === "usd" ? "USD" : "CAD";
-  [0.1, 1, 10, 100, 1000, 3000].forEach((price) => {
-    const log = Math.log10(price);
-    if (log < minLog || log > maxLog) return;
-    const at = project(wx(price), -1.08, 0);
-    ctx.textAlign = "center";
-    ctx.fillText(price >= 1 ? "$" + price : "$" + price.toFixed(2), at.x, at.y);
+  const priceLabel = (price) => (price >= 1 ? "$" + price : "$" + price.toFixed(2));
+  [-1.18, 1.18].forEach((edge) => {
+    [0.1, 1, 10, 100, 1000, 3000].forEach((price) => {
+      const log = Math.log10(price);
+      if (log < minLog || log > maxLog) return;
+      const at = project(wx(price), edge, 0);
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(priceLabel(price), at.x, at.y);
+    });
+    if (edge < 0) {
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      const title = project(1.12, edge, 0);
+      ctx.fillText("Price (" + currency + ", log)", title.x, title.y);
+    }
   });
-  [0, 10, 20, 30, 40].forEach((year) => {
-    if (year > maxYear) return;
-    const at = project(-1.12, wy(year), 0);
-    ctx.textAlign = "right";
-    ctx.fillText(year + "y", at.x, at.y);
+  [-1.2, 1.2].forEach((edge) => {
+    [0, 10, 20, 30, 40].forEach((year) => {
+      if (year > maxYear) return;
+      const at = project(edge, wy(year), 0);
+      ctx.textAlign = edge < 0 ? "right" : "left";
+      ctx.textBaseline = "middle";
+      ctx.fillText(year + "y", at.x, at.y);
+    });
+    if (edge < 0) {
+      ctx.textAlign = "right";
+      const yearLabel = project(edge, 1.16, 0);
+      ctx.fillText("Years of record", yearLabel.x, yearLabel.y);
+    }
   });
   ctx.textAlign = "left";
-  ctx.fillText("Price (" + currency + ", log)", project(1.05, -1.08, 0).x, project(1.05, -1.08, 0).y);
-  ctx.textAlign = "right";
-  const yearLabel = project(-1.12, 1.08, 0);
-  ctx.fillText("Years of record", yearLabel.x, yearLabel.y);
+  ctx.textBaseline = "alphabetic";
 
   const boxes = shown.map((row) => {
     const span = logSpan(row);
