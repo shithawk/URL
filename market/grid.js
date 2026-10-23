@@ -98,6 +98,14 @@ function selectedRow() {
   return shown.find((row) => listingId(row) === hoverId) || null;
 }
 
+function quoteDate(iso) {
+  if (!iso) return "CAD quotes";
+  const parts = iso.split("-").map(Number);
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  if (parts.length !== 3 || parts.some((n) => !n)) return "CAD quotes · " + iso;
+  return "CAD quotes · " + parts[2] + " " + months[parts[1] - 1] + " " + parts[0];
+}
+
 function field(label, value) {
   return '<div class="field"><dt>' + label + "</dt><dd>" + value + "</dd></div>";
 }
@@ -124,7 +132,7 @@ function renderPanel() {
   let html = "<h2>" + (row ? escapeHtml(row.n) : "—") + "</h2>";
   html += '<p class="ticker">' + (row ? escapeHtml(row.s) : "—") + "</p>";
   if (row && pinnedId && listingId(row) === pinnedId) {
-    html += '<button type="button" id="release">Release</button>';
+    html += '<button type="button" id="release">Unpin</button>';
   }
   html += "<dl>";
   html += field("Ticker", row ? escapeHtml(row.s) : "—");
@@ -530,6 +538,8 @@ Promise.all([
   .then(([rows, meta]) => {
     listings = rows;
     asof = meta && meta.asof ? meta.asof : "";
+    const stamp = document.getElementById("quote-date");
+    if (stamp) stamp.textContent = quoteDate(asof);
     applyFilters();
   })
   .catch(() => {
