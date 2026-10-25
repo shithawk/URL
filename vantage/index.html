@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vantage — Shoreline</title>
+<meta name="description" content="Shoreline Vantage is a self-hosted multi-expert AI. Ally orchestrates specialist models on your own machine. Chats and reports stay local unless you allow a live lookup." />
+<meta name="theme-color" content="#04121f" />
+<meta name="robots" content="index, follow" />
+<link rel="canonical" href="https://shoreline.one/vantage" />
+<link rel="icon" href="/favicon.ico" sizes="any" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+<meta property="og:title" content="Shoreline Vantage" />
+<meta property="og:description" content="A private board of specialist AIs, run on your own hardware." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://shoreline.one/vantage" />
+<style>
+  :root {
+    --deep: #04121f;
+    --deep-2: #071d31;
+    --tide: #0b3a5b;
+    --foam: #7fe7d6;
+    --foam-2: #46c7c0;
+    --sun: #ffcf6b;
+    --coral: #ff7a6b;
+    --ink: #dbeaf2;
+    --ink-dim: #7fa0b4;
+    --ink-lede: #9bb8c8;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+    --sans: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: var(--sans);
+    color: var(--ink);
+    background:
+      radial-gradient(1200px 600px at 80% -10%, #0d3350 0%, transparent 60%),
+      radial-gradient(900px 500px at 10% 0%, #0a2740 0%, transparent 55%),
+      linear-gradient(180deg, var(--deep) 0%, var(--deep-2) 55%, var(--tide) 100%);
+    min-height: 100%;
+    overflow-x: hidden;
+    position: relative;
+  }
+  #bgvideo {
+    position: fixed; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; z-index: -1; pointer-events: none;
+  }
+  body::before {
+    content: "";
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background: linear-gradient(180deg, rgba(4,18,31,0.68) 0%, rgba(4,18,31,0.48) 45%, rgba(11,58,91,0.72) 100%);
+  }
+  .wrap { position: relative; z-index: 2; max-width: 980px; margin: 0 auto; padding: 0 24px 12vh; }
+  .coords {
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; color: var(--ink-dim);
+    padding: 20px 0 0; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px;
+  }
+  .coords a { color: var(--foam); text-decoration: none; }
+  .coords a:hover { color: var(--sun); }
+  .coords .geo { justify-self: start; }
+  .coords .status { justify-self: end; }
+  header.hero { padding: 5vh 0 4vh; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--foam); border: 1px solid rgba(127,231,214,0.3); background: rgba(127,231,214,0.06);
+    padding: 6px 12px; border-radius: 999px; margin-bottom: 22px;
+  }
+  .badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--foam); box-shadow: 0 0 10px var(--foam); }
+  h1 { font-size: clamp(36px, 6vw, 64px); line-height: 0.94; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 18px; }
+  h1 span {
+    background: linear-gradient(120deg, var(--foam) 0%, var(--sun) 60%, var(--coral) 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .lede { max-width: 38em; font-size: 18px; line-height: 1.55; color: var(--ink-lede); }
+  .shots { margin-top: 5vh; display: grid; gap: 22px; }
+  .shots figure {
+    margin: 0;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(4,18,31,0.72);
+    box-shadow: 0 20px 50px -24px rgba(0,0,0,0.7);
+  }
+  .shots img { display: block; width: 100%; height: auto; }
+  .shots figcaption {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--foam-2);
+    padding: 12px 16px 14px;
+  }
+  .points { margin-top: 28px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .point {
+    border-radius: 18px; padding: 20px;
+    background: linear-gradient(180deg, rgba(4,18,31,0.82), rgba(7,29,49,0.78));
+    border: 1px solid rgba(255,255,255,0.09);
+  }
+  .point h2 { font-size: 18px; letter-spacing: -0.02em; margin-bottom: 8px; }
+  .point p { color: var(--ink-dim); font-size: 14px; line-height: 1.55; }
+  footer {
+    position: relative; z-index: 2; text-align: center; padding: 6vh 24px 8vh;
+    font-family: var(--mono); font-size: 12px; color: var(--ink-dim); letter-spacing: 0.05em;
+  }
+  footer a { color: var(--foam-2); text-decoration: none; }
+  @media (max-width: 760px) {
+    .points { grid-template-columns: 1fr; }
+    .coords { grid-template-columns: 1fr; gap: 6px; }
+    .coords .status { justify-self: start; }
+  }
+</style>
+</head>
+<body>
+  <video id="bgvideo" autoplay muted loop playsinline aria-hidden="true">
+    <source src="/bgwave.mp4" type="video/mp4" />
+  </video>
+  <div class="wrap">
+    <div class="coords">
+      <a class="geo" href="/">← HARBOR</a>
+      <a href="mailto:jacob@shoreline.one">jacob@shoreline.one</a>
+      <span class="status">VANTAGE</span>
+    </div>
+
+    <header class="hero">
+      <span class="badge"><span class="dot"></span>dive deeper, stay grounded</span>
+      <h1>Shoreline<br /><span>Vantage</span></h1>
+      <p class="lede">A private board of specialist AIs. Ally orchestrates them on your own hardware. Chats, memory, and reports stay on the machine unless you allow a live lookup.</p>
+    </header>
+
+    <section class="shots" aria-label="Screenshots">
+      <figure>
+        <img src="web.jpg" alt="Shoreline Vantage web chat with a multi-expert research report and a generated image" width="1024" height="578" />
+        <figcaption>Web</figcaption>
+      </figure>
+      <figure>
+        <img src="admin.png" alt="Shoreline Vantage admin: expert roster, local models, and server controls" width="1024" height="575" />
+        <figcaption>Admin</figcaption>
+      </figure>
+    </section>
+
+    <section class="points" aria-label="How Vantage works">
+      <article class="point">
+        <h2>One voice, many experts</h2>
+        <p>Thirteen built-in specialists, each with its own local model. A consultation picks the relevant few. A deep report has them research, review each other, and write a PDF.</p>
+      </article>
+      <article class="point">
+        <h2>Web and Telegram</h2>
+        <p>The same engine behind a chat window and a Telegram bot. Roster, internet permission, and voice settings stay in step.</p>
+      </article>
+      <article class="point">
+        <h2>Offline until you say so</h2>
+        <p>Answers start from local models, memory, and an offline library. Web search, stocks, weather, and crawls ask first. Deny keeps the turn on the machine.</p>
+      </article>
+    </section>
+  </div>
+  <footer>
+    <p><a href="/">Shoreline</a> · Vantage · Where the elements meet</p>
+  </footer>
+</body>
+</html>
