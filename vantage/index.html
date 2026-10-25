@@ -86,13 +86,13 @@
     box-shadow: 0 20px 50px -24px rgba(0,0,0,0.7);
   }
   .shots img { display: block; width: 100%; height: auto; }
+  .shots figure.phone { max-width: 420px; margin-inline: auto; }
   .shots figcaption {
-    font-family: var(--mono);
-    font-size: 12px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--foam-2);
-    padding: 12px 16px 14px;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    padding: 16px 18px 12px;
   }
   .points { margin-top: 28px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
   .point {
@@ -133,12 +133,16 @@
 
     <section class="shots" aria-label="Screenshots">
       <figure>
+        <figcaption>Web UI</figcaption>
         <img src="/vantage/web.jpg" alt="Shoreline Vantage web chat with a multi-expert research report and a generated image" width="1024" height="578" />
-        <figcaption>Web</figcaption>
       </figure>
       <figure>
+        <figcaption>Admin page</figcaption>
         <img src="/vantage/admin.png" alt="Shoreline Vantage admin: expert roster, local models, and server controls" width="1024" height="575" />
-        <figcaption>Admin</figcaption>
+      </figure>
+      <figure class="phone">
+        <figcaption>Telegram</figcaption>
+        <img src="/vantage/telegram.png" alt="Shoreline Vantage Telegram bot showing expert commands and settings" width="684" height="1046" />
       </figure>
     </section>
 
