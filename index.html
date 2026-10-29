@@ -181,7 +181,9 @@
     height: clamp(124px, 18vw, 196px);
     width: auto;
     margin-bottom: 26px;
-    border-radius: 16px;
+    /* square TL + BR; rounded TR + BL match the PNG */
+    border-radius: 0 12% 0 12%;
+    overflow: hidden;
     filter:
       drop-shadow(0 6px 24px rgba(4, 18, 31, 0.55))
       drop-shadow(0 0 22px rgba(127, 231, 214, 0.25));
