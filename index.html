@@ -586,7 +586,7 @@
     <section class="logo-vote" id="logo-vote" aria-label="Logo vote">
       <p class="vote-kicker">Quick vote</p>
       <h2>Which logo do you like the most?</h2>
-      <p class="vote-lede">One vote per browser. Results update live after you pick.</p>
+      <p class="vote-lede">One vote per day. Results update live after you pick.</p>
       <div class="vote-grid">
         <article class="vote-card" data-choice="kingfisher">
           <p class="vote-label">Option A</p>
@@ -773,7 +773,7 @@
 
   // --- quick logo vote ---
   (() => {
-    const VOTED_KEY = "shoreline-logo-voted-v1";
+    const VOTED_KEY = "shoreline-logo-voted-v2";
     const LOCAL_KEY = "shoreline-logo-counts-v1";
     const LOGOS = {
       kingfisher: { src: "shoreline_logo_oct29.png", alt: "Shoreline — Kingfisher logo", label: "Kingfisher" },
@@ -783,6 +783,28 @@
     const heroLogo = document.getElementById("hero-logo");
     const buttons = document.querySelectorAll("[data-vote]");
     const cards = document.querySelectorAll(".vote-card");
+
+    function todayKey() {
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return y + "-" + m + "-" + day;
+    }
+
+    function readTodayVote() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(VOTED_KEY) || "null");
+        if (raw && raw.day === todayKey() && (raw.choice === "kingfisher" || raw.choice === "h4")) {
+          return raw.choice;
+        }
+      } catch {}
+      return null;
+    }
+
+    function saveTodayVote(choice) {
+      localStorage.setItem(VOTED_KEY, JSON.stringify({ day: todayKey(), choice }));
+    }
 
     function localCounts() {
       try {
@@ -820,9 +842,9 @@
         if (count) count.textContent = n + " · " + pct + "%";
       });
       if (status) {
-        const picked = localStorage.getItem(VOTED_KEY);
-        if (picked) status.textContent = "You voted " + (LOGOS[picked]?.label || picked) + ". " + (note || (total + " total vote" + (total === 1 ? "" : "s") + "."));
-        else status.textContent = note || (total ? total + " total vote" + (total === 1 ? "" : "s") + "." : "No votes yet — be the first.");
+        const picked = readTodayVote();
+        if (picked) status.textContent = "You voted " + (LOGOS[picked]?.label || picked) + " today. " + (note || (total + " total vote" + (total === 1 ? "" : "s") + "."));
+        else status.textContent = note || (total ? total + " total vote" + (total === 1 ? "" : "s") + ". Come back tomorrow for another vote." : "No votes yet — be the first.");
       }
     }
 
@@ -846,9 +868,9 @@
     }
 
     async function castVote(choice) {
-      if (localStorage.getItem(VOTED_KEY)) return;
+      if (readTodayVote()) return;
       lockUI(choice);
-      localStorage.setItem(VOTED_KEY, choice);
+      saveTodayVote(choice);
       try {
         const res = await fetch("/api/logo-vote", {
           method: "POST",
@@ -870,7 +892,7 @@
       btn.addEventListener("click", () => castVote(btn.getAttribute("data-vote")));
     });
 
-    const existing = localStorage.getItem(VOTED_KEY);
+    const existing = readTodayVote();
     if (existing) lockUI(existing);
 
     fetchVotes().then(({ votes, live }) => {
