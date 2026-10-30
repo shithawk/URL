@@ -42,7 +42,7 @@
       "url": "https://shoreline.one/",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://shoreline.one/shoreline_logo_oct29.png"
+        "url": "https://shoreline.one/shoreline_logo_h4.png"
       }
     }
   ]
@@ -178,15 +178,16 @@
 
   .logo {
     display: block;
-    height: clamp(124px, 18vw, 196px);
+    height: clamp(88px, 13vw, 148px);
     width: auto;
     margin-bottom: 26px;
-    /* square TL + BR; rounded TR + BL match the PNG */
-    border-radius: 0 12% 0 12%;
+    /* square TL + BR; rounded TR + BL */
+    border-radius: 0 clamp(28px, 8vw, 56px) 0 clamp(28px, 8vw, 56px);
     overflow: hidden;
+    background: #fff;
     filter:
       drop-shadow(0 6px 24px rgba(4, 18, 31, 0.55))
-      drop-shadow(0 0 22px rgba(127, 231, 214, 0.25));
+      drop-shadow(0 0 22px rgba(127, 231, 214, 0.2));
   }
 
   .badge {
@@ -260,6 +261,154 @@
     width: 100%;
     height: 100%;
     border: 0;
+  }
+
+  /* quick logo vote */
+  .logo-vote {
+    margin: 0 0 8vh;
+    padding: 28px;
+    border-radius: 20px;
+    background: linear-gradient(180deg, rgba(4,18,31,0.82), rgba(7,29,49,0.78));
+    border: 1px solid rgba(255,255,255,0.09);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .logo-vote .vote-kicker {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--foam-2);
+    margin-bottom: 8px;
+  }
+  .logo-vote h2 {
+    font-size: clamp(22px, 3vw, 28px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 8px;
+  }
+  .logo-vote .vote-lede {
+    color: var(--ink-lede);
+    font-size: 15px;
+    line-height: 1.5;
+    margin-bottom: 22px;
+    max-width: 36em;
+  }
+  .vote-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+  @media (max-width: 640px) {
+    .vote-grid { grid-template-columns: 1fr; }
+  }
+  .vote-card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px;
+    border-radius: 16px;
+    background: rgba(4, 18, 31, 0.55);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .vote-card img {
+    width: 100%;
+    height: auto;
+    display: block;
+    background: #fff;
+    border-radius: 0 clamp(20px, 6vw, 36px) 0 clamp(20px, 6vw, 36px);
+  }
+  .vote-card .vote-label {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--foam);
+  }
+  .vote-card .vote-name {
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: -6px;
+  }
+  .vote-card button {
+    appearance: none;
+    border: 1px solid rgba(127, 231, 214, 0.45);
+    background: rgba(127, 231, 214, 0.1);
+    color: var(--foam);
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 12px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background .2s, border-color .2s, color .2s;
+  }
+  .vote-card button:hover,
+  .vote-card button:focus-visible {
+    background: rgba(127, 231, 214, 0.2);
+    border-color: var(--foam);
+    color: #fff;
+  }
+  .vote-card button:focus-visible {
+    outline: 2px solid var(--foam);
+    outline-offset: 3px;
+  }
+  .vote-card button:disabled {
+    opacity: 0.55;
+    cursor: default;
+  }
+  .vote-card.is-picked {
+    border-color: rgba(255, 138, 31, 0.65);
+    box-shadow: 0 0 0 1px rgba(255, 138, 31, 0.25);
+  }
+  .vote-card.is-picked button {
+    border-color: rgba(255, 138, 31, 0.7);
+    background: rgba(255, 138, 31, 0.16);
+    color: #ffcf6b;
+  }
+  .vote-results {
+    margin-top: 20px;
+    display: grid;
+    gap: 12px;
+  }
+  .vote-bar-row {
+    display: grid;
+    grid-template-columns: 110px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    font-size: 14px;
+  }
+  .vote-bar-row .name { color: var(--ink); font-weight: 600; }
+  .vote-bar-track {
+    height: 10px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.08);
+    overflow: hidden;
+  }
+  .vote-bar-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--foam-2), var(--foam));
+    transition: width .45s ease;
+  }
+  .vote-bar-row[data-choice="h4"] .vote-bar-fill {
+    background: linear-gradient(90deg, #ff8a1f, var(--sun));
+  }
+  .vote-bar-row .count {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-dim);
+    min-width: 4.5em;
+    text-align: right;
+  }
+  .vote-status {
+    margin-top: 14px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    color: var(--ink-dim);
   }
 
   /* the "docks" — app cards laid out like moored boats */
@@ -410,7 +559,6 @@
     </div>
 
     <header class="hero">
-      <img class="logo" src="shoreline_logo_oct29.png" alt="Shoreline" />
       <span class="badge"><span class="dot"></span>dive deeper, stay grounded</span>
       <h1>Welcome to<br /><span class="tide-word">Shoreline</span></h1>
       <p class="lede">
@@ -432,6 +580,39 @@
       </div>
     </section>
     -->
+
+    <section class="logo-vote" id="logo-vote" aria-label="Logo vote">
+      <p class="vote-kicker">Quick vote</p>
+      <h2>Which logo do you like the most?</h2>
+      <p class="vote-lede">One vote per browser. Results update live after you pick.</p>
+      <div class="vote-grid">
+        <article class="vote-card" data-choice="kingfisher">
+          <p class="vote-label">Option A</p>
+          <p class="vote-name">Kingfisher</p>
+          <img src="shoreline_logo_oct29.png" alt="Kingfisher Shoreline logo on white" width="1142" height="272" />
+          <button type="button" data-vote="kingfisher">Vote Kingfisher</button>
+        </article>
+        <article class="vote-card" data-choice="h4">
+          <p class="vote-label">Option B</p>
+          <p class="vote-name">Diamond H4</p>
+          <img src="shoreline_logo_h4.png?v=2" alt="Diamond H4 Shoreline logo on white" width="1142" height="272" />
+          <button type="button" data-vote="h4">Vote Diamond H4</button>
+        </article>
+      </div>
+      <div class="vote-results" aria-live="polite">
+        <div class="vote-bar-row" data-choice="kingfisher">
+          <span class="name">Kingfisher</span>
+          <div class="vote-bar-track"><div class="vote-bar-fill" id="bar-kingfisher"></div></div>
+          <span class="count" id="count-kingfisher">0 · 0%</span>
+        </div>
+        <div class="vote-bar-row" data-choice="h4">
+          <span class="name">Diamond H4</span>
+          <div class="vote-bar-track"><div class="vote-bar-fill" id="bar-h4"></div></div>
+          <span class="count" id="count-h4">0 · 0%</span>
+        </div>
+      </div>
+      <p class="vote-status" id="vote-status">Loading results…</p>
+    </section>
 
     <main class="docks" aria-label="Projects">
       <a class="dock" href="/vantage">
@@ -587,6 +768,98 @@
       card.style.setProperty('--my', (e.clientY - rect.top) + 'px');
     });
   });
+
+  // --- quick logo vote ---
+  (() => {
+    const VOTED_KEY = "shoreline-logo-voted-v1";
+    const LOCAL_KEY = "shoreline-logo-counts-v1";
+    const status = document.getElementById("vote-status");
+    const buttons = document.querySelectorAll("[data-vote]");
+    const cards = document.querySelectorAll(".vote-card");
+
+    function localCounts() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(LOCAL_KEY) || "{}");
+        return {
+          kingfisher: Number(raw.kingfisher) || 0,
+          h4: Number(raw.h4) || 0,
+        };
+      } catch {
+        return { kingfisher: 0, h4: 0 };
+      }
+    }
+
+    function saveLocalCounts(votes) {
+      localStorage.setItem(LOCAL_KEY, JSON.stringify(votes));
+    }
+
+    function render(votes, note) {
+      const total = (votes.kingfisher || 0) + (votes.h4 || 0);
+      ["kingfisher", "h4"].forEach((key) => {
+        const n = votes[key] || 0;
+        const pct = total ? Math.round((n / total) * 100) : 0;
+        const bar = document.getElementById("bar-" + key);
+        const count = document.getElementById("count-" + key);
+        if (bar) bar.style.width = pct + "%";
+        if (count) count.textContent = n + " · " + pct + "%";
+      });
+      if (status) {
+        const picked = localStorage.getItem(VOTED_KEY);
+        if (picked) status.textContent = "You voted " + (picked === "h4" ? "Diamond H4" : "Kingfisher") + ". " + (note || (total + " total vote" + (total === 1 ? "" : "s") + "."));
+        else status.textContent = note || (total ? total + " total vote" + (total === 1 ? "" : "s") + "." : "No votes yet — be the first.");
+      }
+    }
+
+    function lockUI(choice) {
+      buttons.forEach((btn) => { btn.disabled = true; });
+      cards.forEach((card) => {
+        card.classList.toggle("is-picked", card.getAttribute("data-choice") === choice);
+      });
+    }
+
+    async function fetchVotes() {
+      try {
+        const res = await fetch("/api/logo-vote", { cache: "no-store" });
+        if (!res.ok) throw new Error("api");
+        const data = await res.json();
+        return { votes: { kingfisher: data.kingfisher || 0, h4: data.h4 || 0 }, live: true };
+      } catch {
+        return { votes: localCounts(), live: false };
+      }
+    }
+
+    async function castVote(choice) {
+      if (localStorage.getItem(VOTED_KEY)) return;
+      lockUI(choice);
+      localStorage.setItem(VOTED_KEY, choice);
+      try {
+        const res = await fetch("/api/logo-vote", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ choice }),
+        });
+        if (!res.ok) throw new Error("api");
+        const data = await res.json();
+        render({ kingfisher: data.kingfisher || 0, h4: data.h4 || 0 }, data.total + " total vote" + (data.total === 1 ? "" : "s") + ".");
+      } catch {
+        const votes = localCounts();
+        votes[choice] = (votes[choice] || 0) + 1;
+        saveLocalCounts(votes);
+        render(votes, "Saved on this device (live API offline).");
+      }
+    }
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => castVote(btn.getAttribute("data-vote")));
+    });
+
+    const existing = localStorage.getItem(VOTED_KEY);
+    if (existing) lockUI(existing);
+
+    fetchVotes().then(({ votes, live }) => {
+      render(votes, live ? undefined : "Showing local tally — live results need the Vercel API.");
+    });
+  })();
 </script>
 
   <!-- Vercel Web Analytics -->
