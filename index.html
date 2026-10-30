@@ -177,7 +177,7 @@
   }
 
   .logo {
-    display: block;
+    display: none;
     height: clamp(88px, 13vw, 148px);
     width: auto;
     margin-bottom: 26px;
@@ -189,6 +189,7 @@
       drop-shadow(0 6px 24px rgba(4, 18, 31, 0.55))
       drop-shadow(0 0 22px rgba(127, 231, 214, 0.2));
   }
+  .logo.is-visible { display: block; }
 
   .badge {
     display: inline-flex;
@@ -559,6 +560,7 @@
     </div>
 
     <header class="hero">
+      <img class="logo" id="hero-logo" src="" alt="Shoreline" hidden />
       <span class="badge"><span class="dot"></span>dive deeper, stay grounded</span>
       <h1>Welcome to<br /><span class="tide-word">Shoreline</span></h1>
       <p class="lede">
@@ -773,7 +775,12 @@
   (() => {
     const VOTED_KEY = "shoreline-logo-voted-v1";
     const LOCAL_KEY = "shoreline-logo-counts-v1";
+    const LOGOS = {
+      kingfisher: { src: "shoreline_logo_oct29.png", alt: "Shoreline — Kingfisher logo", label: "Kingfisher" },
+      h4: { src: "shoreline_logo_h4.png?v=2", alt: "Shoreline — Diamond H4 logo", label: "Diamond H4" },
+    };
     const status = document.getElementById("vote-status");
+    const heroLogo = document.getElementById("hero-logo");
     const buttons = document.querySelectorAll("[data-vote]");
     const cards = document.querySelectorAll(".vote-card");
 
@@ -793,6 +800,15 @@
       localStorage.setItem(LOCAL_KEY, JSON.stringify(votes));
     }
 
+    function showHeroLogo(choice) {
+      const logo = LOGOS[choice];
+      if (!heroLogo || !logo) return;
+      heroLogo.src = logo.src;
+      heroLogo.alt = logo.alt;
+      heroLogo.hidden = false;
+      heroLogo.classList.add("is-visible");
+    }
+
     function render(votes, note) {
       const total = (votes.kingfisher || 0) + (votes.h4 || 0);
       ["kingfisher", "h4"].forEach((key) => {
@@ -805,7 +821,7 @@
       });
       if (status) {
         const picked = localStorage.getItem(VOTED_KEY);
-        if (picked) status.textContent = "You voted " + (picked === "h4" ? "Diamond H4" : "Kingfisher") + ". " + (note || (total + " total vote" + (total === 1 ? "" : "s") + "."));
+        if (picked) status.textContent = "You voted " + (LOGOS[picked]?.label || picked) + ". " + (note || (total + " total vote" + (total === 1 ? "" : "s") + "."));
         else status.textContent = note || (total ? total + " total vote" + (total === 1 ? "" : "s") + "." : "No votes yet — be the first.");
       }
     }
@@ -815,6 +831,7 @@
       cards.forEach((card) => {
         card.classList.toggle("is-picked", card.getAttribute("data-choice") === choice);
       });
+      showHeroLogo(choice);
     }
 
     async function fetchVotes() {
